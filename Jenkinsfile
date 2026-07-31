@@ -46,7 +46,8 @@ pipeline {
         stage('Docker Build') {
             steps {
                 // Step 6: Docker Image built
-                sh 'docker-compose build'
+                // Using the modern 'docker compose' syntax (V2) instead of the old hyphenated version
+                sh 'docker compose build'
                 echo 'Docker images built successfully.'
             }
         }
