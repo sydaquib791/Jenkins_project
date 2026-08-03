@@ -51,5 +51,14 @@ pipeline {
                 echo 'Docker images built successfully.'
             }
         }
+        
+        stage('Deploy (CD)') {
+            steps {
+                // Step 7: Deploy the containers
+                sh 'docker compose down' // Stops old versions if they exist
+                sh 'docker compose up -d' // Starts the new versions in the background
+                echo 'Step 8: Application is LIVE!'
+            }
+        }
     }
 }
