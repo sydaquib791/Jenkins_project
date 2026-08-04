@@ -9,7 +9,7 @@ pipeline {
         // Variables for easy configuration
         DOCKER_CREDS_ID = 'docker-hub-creds'
         EC2_CREDS_ID = 'prod-ec2-key'
-        EC2_IP = '98.130.142.156'
+        EC2_IP = '100.49.229.131'
         EC2_USER = 'ubuntu'
     }
     
