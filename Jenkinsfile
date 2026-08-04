@@ -5,11 +5,17 @@ pipeline {
         maven 'MAVEN3'
     }
     
+    environment {
+        // Variables for easy configuration
+        DOCKER_CREDS_ID = 'docker-hub-creds'
+        EC2_CREDS_ID = 'prod-ec2-key'
+        EC2_IP = '98.130.142.156'
+        EC2_USER = 'ubuntu'
+    }
+    
     stages {
         stage('Checkout Code') {
             steps {
-                // Jenkins automatically checks out the code before this step runs
-                // We just use this stage to visually confirm it on the dashboard
                 echo 'Source code checked out successfully from GitHub.'
             }
         }
@@ -17,7 +23,6 @@ pipeline {
         stage('Build') {
             steps {
                 dir('backend') {
-                    // Step 4: Compile the code
                     sh 'mvn clean compile'
                     echo 'Backend compiled successfully.'
                 }
@@ -27,7 +32,6 @@ pipeline {
         stage('Test') {
             steps {
                 dir('backend') {
-                    // Step 5: Automated Tests execute
                     sh 'mvn test'
                     echo 'Automated tests passed successfully.'
                 }
@@ -37,7 +41,6 @@ pipeline {
         stage('Package') {
             steps {
                 dir('backend') {
-                    // Package the JAR for the Docker build
                     sh 'mvn package'
                 }
             }
@@ -45,19 +48,44 @@ pipeline {
         
         stage('Docker Build') {
             steps {
-                // Step 6: Docker Image built
-                // Using the modern 'docker compose' syntax (V2) instead of the old hyphenated version
+                // Docker compose build will use the tags from docker-compose.yml
                 sh 'docker compose build'
-                echo 'Docker images built successfully.'
+                echo 'Docker images built locally.'
             }
         }
         
-        stage('Deploy (CD)') {
+        stage('Push to Docker Hub') {
             steps {
-                // Step 7: Deploy the containers
-                sh 'docker compose down' // Stops old versions if they exist
-                sh 'docker compose up -d' // Starts the new versions in the background
-                echo 'Step 8: Application is LIVE!'
+                // Log in to Docker Hub using the credentials stored in Jenkins
+                withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    
+                    // Push the newly built images to Docker Hub
+                    sh 'docker compose push'
+                }
+            }
+        }
+        
+        stage('Deploy to Remote EC2') {
+            steps {
+                // Use the SSH agent plugin with the EC2 private key
+                sshagent([env.EC2_CREDS_ID]) {
+                    // 1. Create a directory on the remote server
+                    sh "ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_IP} 'mkdir -p ~/deployment'"
+                    
+                    // 2. Securely copy the docker-compose.yml to the new EC2 server
+                    sh "scp -o StrictHostKeyChecking=no docker-compose.yml ${env.EC2_USER}@${env.EC2_IP}:~/deployment/"
+                    
+                    // 3. SSH into the remote server, pull the images, and start the app
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_IP} '
+                            cd ~/deployment &&
+                            docker compose pull &&
+                            docker compose down &&
+                            docker compose up -d
+                        '
+                    """
+                }
             }
         }
     }
