@@ -3,40 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Registration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Employee Onboarding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
-            background-color: #f4f7f6;
+            background: var(--bg-gradient);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            color: #333;
+            padding: 20px;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Background Glow Accents */
+        .glow-1, .glow-2 {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glow-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(99, 102, 241, 0.35);
+            top: 15%;
+            left: 20%;
+        }
+
+        .glow-2 {
+            width: 350px;
+            height: 350px;
+            background: rgba(236, 72, 153, 0.25);
+            bottom: 15%;
+            right: 20%;
         }
 
         .container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 44px 36px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 100px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 24px;
-            color: #1a1a1a;
-            font-weight: 600;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
         }
 
         .form-group {
@@ -46,121 +112,193 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #555;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-muted);
+            transition: stroke 0.3s ease;
         }
 
         input[type="text"],
         input[type="email"] {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 13px 16px 13px 44px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             font-size: 14px;
-            transition: all 0.3s ease;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        input[type="text"]:focus,
-        input[type="email"]:focus {
-            border-color: #4CAF50;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        input::placeholder {
+            color: #64748b;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        input:focus + svg {
+            stroke: var(--primary);
         }
 
         button[type="submit"] {
             width: 100%;
             padding: 14px;
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
             margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
         button[type="submit"]:hover {
-            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
         button[type="submit"]:active {
-            transform: translateY(2px);
+            transform: translateY(0);
+        }
+
+        button[type="submit"]:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         #result {
             margin-top: 20px;
             text-align: center;
             font-size: 14px;
-            color: #4CAF50;
             font-weight: 500;
+            min-height: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .success {
+            color: #34d399;
+        }
+
+        .error {
+            color: #f87171;
         }
     </style>
 </head>
 <body>
 
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+
     <div class="container">
-        <h1>Employee Registration</h1>
+        <div class="header">
+            <span class="badge">HR Portal</span>
+            <h1>Employee Registration</h1>
+        </div>
 
         <form id="employeeForm">
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" placeholder="John Doe" required>
+                <label for="name">Full Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="name" placeholder="John Doe" required>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="john@example.com" required>
+                <label for="email">Work Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="john@company.com" required>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="designation">Designation</label>
-                <input type="text" id="designation" placeholder="Software Engineer" required>
+                <div class="input-wrapper">
+                    <input type="text" id="designation" placeholder="Software Engineer" required>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387M20.25 14.15a41.669 41.669 0 01-16.5 0m16.5 0l-1.5-6.75M3.75 14.15v4.25c0 1.094.787 2.036 1.872 2.18 2.087.277 4.216.42 6.378.42s4.291-.143 6.378-.42c1.085-.144 1.872-1.086 1.872-2.18v-4.25m-16.5 0a2.18 2.18 0 01-.75-1.661V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m0 0a48.1 48.1 0 013.423-.379c1.084-.082 2.055.7 2.186 1.784.06.497.1.998.122 1.503m-5.731-2.906c.06-.497.1-.998.122-1.503.131-1.084 1.102-1.866 2.186-1.784a48.1 48.1 0 013.423.379" />
+                    </svg>
+                </div>
             </div>
 
-            <button type="submit">Submit Registration</button>
+            <button type="submit" id="submitBtn">
+                <span>Submit Registration</span>
+            </button>
         </form>
 
-        <h2 id="result"></h2>
+        <div id="result"></div>
     </div>
 
     <script>
-        document.getElementById("employeeForm")
-            .addEventListener("submit", async function(event) {
-                event.preventDefault();
-                
-                const submitBtn = event.target.querySelector('button[type="submit"]');
-                submitBtn.innerText = "Submitting...";
-                submitBtn.disabled = true;
+        document.getElementById("employeeForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
 
-                const data = {
-                    name: document.getElementById("name").value,
-                    email: document.getElementById("email").value,
-                    designation: document.getElementById("designation").value
-                };
+            submitBtn.innerText = "Submitting...";
+            submitBtn.disabled = true;
+            resultDiv.className = "";
+            resultDiv.innerHTML = "";
 
-                try {
-                    const response = await fetch('/api', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
+            const data = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                designation: document.getElementById("designation").value
+            };
 
-                    const result = await response.text();
-                    document.getElementById("result").innerHTML = result;
-                    document.getElementById("employeeForm").reset();
-                } catch (error) {
-                    document.getElementById("result").innerHTML = "Error saving employee.";
-                    document.getElementById("result").style.color = "#f44336";
-                } finally {
-                    submitBtn.innerText = "Submit Registration";
-                    submitBtn.disabled = false;
-                }
-            });
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.text();
+                resultDiv.className = "success";
+                resultDiv.innerHTML = result || "Employee registered successfully!";
+                document.getElementById("employeeForm").reset();
+            } catch (error) {
+                resultDiv.className = "error";
+                resultDiv.innerHTML = "Error saving employee. Please try again.";
+            } finally {
+                submitBtn.innerText = "Submit Registration";
+                submitBtn.disabled = false;
+            }
+        });
     </script>
 
 </body>
