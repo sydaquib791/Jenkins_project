@@ -10,7 +10,6 @@ pipeline {
         DOCKER_CREDS_ID = 'docker-hub-creds'
         EC2_CREDS_ID = 'prod-ec2-key'
         EC2_IP = '13.202.146.27'
-        echo 'Updated latest EIP'
         EC2_USER = 'ubuntu'
     }
     
